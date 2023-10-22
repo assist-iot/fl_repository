@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+    flrepository:
+        restart: always
+        image: assistiot/fl_repository:latest
+        container_name: flrepository
+        environment:
+            - HOST=0.0.0.0
+            - PORT=9012
+            - DB_PORT=27017
+            - SERVER_PORT=8000
+            - DB_ADDRESS=repositorydb
+        build:
+            context: "."
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        networks:
+            - default
+        ports:
+            - "9013:9012"
+        depends_on:
+            - repositorydb
+    repositorydb:
+        image: assistiot/fl_repository_db:latest
+        container_name: repositorydb
+        restart: always
+        build:
+            context: "."
+            dockerfile: "Dockerfile.db"
+        networks:
+            - default
+        ports:
+            - "27017-27019:27017-27019"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+
+
+
